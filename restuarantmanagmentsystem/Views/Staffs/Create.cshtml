@@ -1,0 +1,34 @@
+﻿@model restuarantmanagmentsystem.Models.Staff
+
+@{
+    ViewData["Title"] = "Create";
+
+}
+<div class="row" id="centertext">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <h5>Name</h5>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <h5>Enter Passcode</h5>
+                <input asp-for="Passcode" class="form-control" />
+                <span asp-validation-for="Passcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-danger" asp-action="Index">Back</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

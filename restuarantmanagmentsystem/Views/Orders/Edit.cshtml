@@ -1,0 +1,64 @@
+﻿@model restuarantmanagmentsystem.Models.Order
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Edit Order";
+    var order = ViewData["OrderInfo"] as Order;
+
+}
+<div id="createorder">
+    
+    
+<form asp-action="Create" >
+    <div id="order" class="centerbox">
+        <h4>Starters</h4>
+    <select id="menu" name="SelectedOptions" asp-items="ViewBag.Starter" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber"/>
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+    </div>
+    </div>
+
+    <div id="order" class="centerbox">
+ <h4>Mains</h4>
+            <select id="menu" name="SelectedOptions" asp-items="ViewBag.Main" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber"/>
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+
+    </div>
+    </div>
+
+    <div id="order" class="centerbox">
+ <h4>Desserts</h4>
+        <select id="menu" name="SelectedOptions" asp-items="ViewBag.Dessert" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber"/>
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+                </div>
+                </div>
+
+ <div id="order" class="centerbox">
+ <h4>Drinks</h4>
+        <select id="menu" name="SelectedOptions" asp-items="ViewBag.Drinks" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber"/>
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+                </div>
+                </div>
+        <div id="centertext">
+    <input type="submit" value="Update" class="btn btn-primary" />
+   </div>
+</form>
+
+ </div>
+
+<div>
+    <a class="btn btn-danger" asp-controller="Orders" asp-action="Details" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_TableID")>Back</a>
+</div>
+
+ 
+
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

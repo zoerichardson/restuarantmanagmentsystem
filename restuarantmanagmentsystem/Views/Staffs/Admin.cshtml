@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Admin";
+}
+<h4>Logged in as: Admin</h4>
+<a class="btn btn-danger" asp-controller="Staffs" asp-action="Login"> Log Out</a>
+
+<div class="centerbox" id="middle">
+
+    <a id="btn" asp-controller="Tables" asp-action="Create">Add Table</a>
+
+    <a id="btn" asp-controller="Menus" asp-action="Index">Menu</a>
+
+    <a id="btn" asp-controller="DayRevenues" asp-action="Index">Revenue</a>
+
+    <a id="btn" asp-controller="Staffs" asp-action="Index">Staff</a>
+</div>

@@ -1,0 +1,36 @@
+﻿@model restuarantmanagmentsystem.Models.Table
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Add Table";
+}
+
+
+<div class="row" id="centertext">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <h4 class="control-label">Table Number:</h4>
+                <input asp-for="TableNumber" type="text" class="form-control" />
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label  class="form-check-label">
+                    <input type="checkbox" type="hidden" asp-for="IsAvailable" checked  /> 
+                </label>
+            </div>
+            <div class="form-group">
+                <input id="btn" type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-danger" asp-controller="Staffs" asp-action="Admin" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_StaffID")>Back</a>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

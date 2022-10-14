@@ -1,0 +1,28 @@
+﻿@model restuarantmanagmentsystem.Models.Staff
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Staff Login";
+}
+
+
+
+<div class="row" id="centertext">
+    <h1>Staff Login</h1>
+    <div class="col-md-4">
+        <section>
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <h3>Passcode</h3>
+                    <input asp-for="Passcode" type="text" class="form-control" />
+                    <span asp-validation-for="Passcode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button id="btn" type="submit" class="btn btn-primary">Log in</button>
+                </div>
+
+            </form>
+        </section>
+    </div>
+</div>
+

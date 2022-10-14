@@ -1,0 +1,28 @@
+﻿@model IEnumerable<restuarantmanagmentsystem.Models.Staff>
+@inject IHttpContextAccessor Accessor
+
+@{
+    ViewData["Title"] = "Staff";
+}
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Add Staff</a>
+</p>
+
+<h5>Select staff member to delete</h5>
+<hr />
+<table class="table">
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    <a id=menubtn asp-action="Delete" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a class="btn btn-danger" asp-controller="Staffs" asp-action="Admin" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_StaffID")>Back</a>
+</div>

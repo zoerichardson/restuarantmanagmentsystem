@@ -1,0 +1,150 @@
+﻿@*@model restuarantmanagmentsystem.Models.Order*@
+@model IEnumerable<restuarantmanagmentsystem.Models.Order>
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div id="orderdisplay">
+<dl class="row" id="centertext">
+    <dt class = "col-sm-2">
+            Order
+    </dt>
+    @foreach (var item in Model) {
+    <dd class = "col-sm-10">
+            @Html.DisplayFor(modelItem => item.Items)
+            
+    </dd>
+    }
+     <dt class = "col-sm-2">
+            Total
+        </dt>
+        <dd class = "col-sm-10">
+            £ @Accessor.HttpContext.Session.GetInt32("_OrderTotal")
+        </dd>
+</dl>
+</div>
+<a class="btn btn-danger" asp-controller="Orders" asp-action="Details" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_TableID")>Back</a>
+         <input  id="cashBtn" type="submit" value="Cash" class="btn btn-primary" />
+           <input  id="cardBtn" type="submit" value="Card" class="btn btn-primary" onclick="readCard()"/>
+        
+
+<div id="modalCash" class="modal">
+    <div class="modal-content" style="max-width:300px">
+        <h5 >Change given: </h5>
+        <p id="result">£</p>
+        <form asp-action="Delete">
+        <input type="hidden"/>
+            <input id="okbtn" type="submit" value="ok" class="btn btn-primary"></>
+         </form>
+     </div>
+</div>
+
+<div id="modalAmount" class="modal" >
+  <!-- Modal content -->
+  <div class="modal-content" style="max-width:600px">
+    <span class="close">&times;</span>
+     <h5>Enter amount:</h5>  
+    <input type=text id="calculateAmount" />
+        <input id="add" type="submit" value="Ok" class="btn btn-primary"/>
+  </div>
+</div>
+
+<div id="myModalCard" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="max-width:600px">
+@*        <span class="close">&times;</span>*@
+    <h5>Processing...</h5>
+    </div>
+</div>
+
+<div id="modalComplete" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content" style="max-width:600px">
+        @*        <span class="close">&times;</span>*@
+         <form asp-action="Delete">
+        <h5>Payment Accepted</h5>
+            <input id="accepted" type="submit" value="Ok" class="btn btn-primary" />
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+// Get the modal
+    var modalAmount = document.getElementById("modalAmount");
+    var modalCash = document.getElementById("modalCash");
+var myModalCard = document.getElementById("myModalCard");
+var paymentComplete = document.getElementById("modalComplete");
+
+// Get the button that opens the modal
+var cashBtn = document.getElementById("cashBtn");
+    var cardBtn = document.getElementById("cardBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the modal 
+cashBtn.onclick = function() {
+        modalAmount.style.display = "block";
+}
+
+    cardBtn.onclick = function () {
+        myModalCard.style.display = "block";
+        setTimeout(cardBtn, 10000)
+
+            function ClosePopUp() {
+        myModalCard.style.display = "none";
+        modalComplete.style.display = "block";
+    }
+    setTimeout(ClosePopUp, 10000)
+    }
+
+
+
+var addBtn = document.getElementById("add");
+addBtn.onclick = function(event){
+
+        modalAmount.style.display = "none";
+ modalCash.style.display = "block";
+ 
+ var inputValue = document.getElementById("calculateAmount").value;
+        var result = inputValue - @Accessor.HttpContext.Session.GetInt32("_OrderTotal")
+       document.getElementById("result").innerHTML = result;
+}
+var okbtn = document.getElementById("okbtn");
+okbtn.onclick = function() {
+        modalCash.style.display = "none";
+}
+
+    var acceptedbtn = document.getElementById("accepted");
+    okbtn.onclick = function () {
+        myModalCard.style.display = "none";
+    }
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+        modalAmount.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+            modalAmount.style.display = "none";
+  }
+}
+
+    window.onclick = function (event) {
+        if (event.target == myModalCard) {
+            myModalCard.style.display = "none";
+        }
+    }
+
+
+</script>
+
+
+
+
+

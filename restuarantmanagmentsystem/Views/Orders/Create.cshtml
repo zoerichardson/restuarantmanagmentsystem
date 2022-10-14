@@ -1,0 +1,84 @@
+﻿@model restuarantmanagmentsystem.Models.Order
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Create Order";
+
+    var order = ViewData["OrderInfo"] as Order;
+
+    }
+<div >
+
+
+    <form asp-action="Create" name="createorder" onsubmit="return validateForm()">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div id="order" class="centerbox">
+        <h4>Starters</h4>
+    <select id="menu" name="SelectedOptions" asp-items="ViewBag.Starter" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber" />
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+    </div>
+    </div>
+
+    <div id="order" class="centerbox">
+
+ <h4>Mains</h4>
+            <select id="menu" name="SelectedOptions" asp-items="ViewBag.Main" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber"/>
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+
+    </div>
+    </div>
+
+    <div id="order" class="centerbox">
+ <h4>Desserts</h4>
+            <select id="menu" name="SelectedOptions" asp-items="ViewBag.Dessert" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber" />
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+                </div>
+                </div>
+
+ <div id="order" class="centerbox">
+ <h4>Drinks</h4>
+        <select id="menu" name="SelectedOptions" asp-items="ViewBag.Drinks" multiple size="10"></select>
+                    <div class="form-group">
+                <input type="hidden" asp-for="TableNumber" class="form-control" value="@order.TableNumber" />
+                <span asp-validation-for="TableNumber" class="text-danger"></span>
+                </div>
+                </div>
+        <div id="centertext">
+            <input type="submit"  value="Add"  class="btn btn-primary" />
+        </div>
+</form>
+
+ </div>
+
+
+<div>
+    <a class="btn btn-danger" asp-controller="Tables" asp-action="Index" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_StaffID")>Back</a>
+</div>
+
+<script>
+    function validateForm() {
+        let x = document.forms["createorder"].value;
+        if (x == "") {
+            alert("Name must be filled out");
+            return false;
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

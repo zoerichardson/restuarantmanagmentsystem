@@ -1,0 +1,43 @@
+﻿@model IEnumerable<restuarantmanagmentsystem.Models.Table>
+@inject IHttpContextAccessor Accessor
+
+@{
+    ViewData["Title"] = "Tables";
+}
+<h4>Logged in as: @Accessor.HttpContext.Session.GetString("_Name")</h4>
+<a class="btn btn-danger" asp-controller="Staffs" asp-action="Login"> Log Out</a>
+<h5>Available Tables</h5>
+
+<table class="table">
+    <tbody>
+@foreach (var item in Model) {
+    @if (item.IsAvailable == true){
+        <tr>
+            <td rowspan = "3">
+               <a id="tblbtn" asp-controller="Orders" asp-action="Create" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.TableNumber)</a>
+            </td>
+        </tr>
+}}
+    </tbody>
+</table>
+
+<h5>Your Tables</h5>
+<table class="table">
+    <tbody>
+@foreach (var item in Model) {
+            @if (item.IsAvailable == false)
+            {
+                @if(item.TableNumber.Equals(item.TableNumber))
+                {
+                <tr>
+            <td rowspan = "3">
+                <a id=tblbtn asp-controller="Orders" asp-action="Details" asp-route-id="@item.Id"> @Html.DisplayFor(modelItem => item.TableNumber)</a> 
+            </td>
+        </tr>
+    }}}
+    </tbody>
+
+</table>
+
+
+

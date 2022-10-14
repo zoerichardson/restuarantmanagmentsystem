@@ -1,0 +1,43 @@
+﻿@model IEnumerable<restuarantmanagmentsystem.Models.DayRevenue>
+@inject IHttpContextAccessor Accessor
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+        <th></th>    
+        <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    <h6>@Html.DisplayFor(modelItem => item.Day)</h6>
+            </td>
+            <td>
+                £@Html.DisplayFor(modelItem => item.DayTotal)
+            </td>
+        </tr>
+}
+    </tbody>
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+<table class="table">
+
+
+</table>
+
+<div>
+    <a class="btn btn-danger" asp-controller="Staffs" asp-action="Admin" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_ID")>Back</a>
+</div>
+

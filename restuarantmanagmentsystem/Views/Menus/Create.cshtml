@@ -1,0 +1,45 @@
+﻿@model restuarantmanagmentsystem.Models.Menu
+
+
+@{
+    ViewData["Title"] = "Add Item";
+}
+
+<div class="row" id="centertext">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <h5>Item</h5>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <h5>Price</h5>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+   
+            <h5>Category</h5>
+            <div>
+              <select  asp-for="CategoryType" class="form-control" id="cars">
+    <option value="1">Starter</option>
+    <option value="2">Main</option>
+    <option value="3">Dessert</option>
+    <option value="4">Drinks</option>
+  </select>
+  </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-primary" asp-action="Index">Back</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

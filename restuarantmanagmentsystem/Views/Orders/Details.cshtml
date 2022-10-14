@@ -1,0 +1,48 @@
+﻿
+@model IEnumerable<restuarantmanagmentsystem.Models.Order>
+@inject IHttpContextAccessor Accessor
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div id="centertext">
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Table No: @Accessor.HttpContext.Session.GetInt32("_TableNumber")
+            </th>
+             <th></th>
+                <th></th>
+        </tr>
+       
+    </thead>
+    <tbody>
+
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Items)
+            </td>
+            <td>
+               £ @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                  <a class="btn btn-danger" asp-action="RemoveItem" asp-route-id="@item.ID">Remove</a>
+            </td>
+           
+        </tr>
+}
+    </tbody>
+</table>
+<strong>Total Amount: £ @Accessor.HttpContext.Session.GetInt32("_OrderTotal")</strong>
+</div>
+
+
+<a class="btn btn-danger" asp-controller="Tables" asp-action="Index" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_StaffID")>Back</a>
+        <a class="btn btn-primary" asp-action="Edit" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_TableID")>Add to order</a>
+        <a class="btn btn-primary" asp-controller="Orders" asp-action="Delete" asp-route-id=@Accessor.HttpContext.Session.GetInt32("_TableID")>Make Payment</a>
+
+
