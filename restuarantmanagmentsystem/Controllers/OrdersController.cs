@@ -1,5 +1,7 @@
 ﻿
 
+using restuarantmanagmentsystem.Models;
+
 namespace restuarantmanagmentsystem.Controllers
 {
     public class OrdersController : Controller
@@ -25,19 +27,16 @@ namespace restuarantmanagmentsystem.Controllers
 
             HttpContext.Session.SetInt32(SessionKeyTableDetails, table.Id);
 
-            var tableData = await _context.Table
-                 .Include(o => o.Orders)
-                .FirstOrDefaultAsync(m => m.Id == table.Id);
+          
+            var tableData = GetTableOrders(table.Id);
+         
+            HttpContext.Session.SetInt32(SessionKeyTableNumber, tableData.Result.TableNumber);
 
-            HttpContext.Session.SetInt32(SessionKeyTableNumber, tableData.TableNumber);
-
-            var order = await _context.Order
-                .Where(m => m.TableNumber == tableData.TableNumber)
-                .ToListAsync();
+            var order = GetOrderTableNumber(tableData.Result.TableNumber);
 
 
             var itemPrice = 0;
-            foreach (var o in order)
+            foreach (var o in order.Result)
             {
 
                 ViewData["OrderInfo"] = new Order()
@@ -49,24 +48,22 @@ namespace restuarantmanagmentsystem.Controllers
                 HttpContext.Session.SetInt32(SessionKeyOrderTotal, itemPrice);
             }
 
-            return View(order);
+            return View(order.Result);
 
         }
 
         // GET: Orders/Create
-        public async Task<IActionResult> Create(Table tableId, int id)//staff staff
+        public async Task<IActionResult> Create(Table table)
         {
-
-            var tableInfo = await _context.Table
-    .FirstOrDefaultAsync(m => m.Id == tableId.Id);
+            var tableData = GetTableOrders(table.Id);
 
             int staffID = (int)HttpContext.Session.GetInt32("_StaffID");
             
 
             ViewData["OrderInfo"] = new Order()
             {
-                StaffID = staffID, //staff.id
-                TableNumber = tableInfo.TableNumber,
+                StaffID = staffID,
+                TableNumber = tableData.Result.TableNumber,
 
             };
 
@@ -138,17 +135,21 @@ namespace restuarantmanagmentsystem.Controllers
 
                     HttpContext.Session.SetInt32(SessionKeyOrderID, order.ID);
 
-                    var tableInfo = await _context.Table
-                        .FirstOrDefaultAsync(m => m.TableNumber == order.TableNumber);
+                var table = await _context.Table
+                   .FirstOrDefaultAsync(m => m.TableNumber == order.TableNumber);
 
-                    tableInfo.IsAvailable = false;
-                    _context.Update(tableInfo);
+
+
+             
+
+                    table.IsAvailable = false;
+                    _context.Update(table);
                     await _context.SaveChangesAsync();
 
-                    var staff = await _context.Staff
-                        .FirstOrDefaultAsync(m => m.Id == staffID);
+              
+                var staff = GetStaffID(staffID);
 
-                    return RedirectToAction("Index", "Tables", staff);
+                    return RedirectToAction("Index", "Tables", staff.Result);
                 }
             else
             {
@@ -188,12 +189,13 @@ namespace restuarantmanagmentsystem.Controllers
                 .ToListAsync();
             ViewData["Drinks"] = new SelectList(drinks, "Name", "Name");
 
-            var table = await _context.Table
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            var table = GetTableOrders((int)id);
 
             var order = await _context.Order
-                .FirstOrDefaultAsync(m => m.TableNumber == table.TableNumber);
+                    .FirstOrDefaultAsync(m => m.TableNumber == table.Result.TableNumber);
 
+            
             ViewData["OrderInfo"] = order;
 
             return View();
@@ -207,19 +209,18 @@ namespace restuarantmanagmentsystem.Controllers
                 return NotFound();
             }
 
-            var table = await _context.Table
-    .FirstOrDefaultAsync(m => m.Id == id);
+        
+            var table = GetTableOrders((int)id);
 
-            var order = await _context.Order
-                 .Where(m => m.TableNumber == table.TableNumber)
-                 .ToListAsync();
+        
+            var order = GetOrderTableNumber(table.Result.TableNumber);
 
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            return View(order.Result);
         }
 
         // POST: Orders/Delete/5
@@ -227,16 +228,15 @@ namespace restuarantmanagmentsystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed()
         {
-            var tableNo = HttpContext.Session.GetInt32("_TableID");
+            var tableId = HttpContext.Session.GetInt32("_TableID");
 
-            var table = await _context.Table
-                .Include(o => o.Orders)
-                .FirstOrDefaultAsync(m => m.Id == tableNo);
+           
 
-            var order = await _context.Order
-                .Where(m => m.TableNumber == table.TableNumber)
-                .ToListAsync();
+            var table = GetTableOrders((int)tableId);
 
+        
+
+            var order = GetOrderTableNumber(table.Result.TableNumber);
 
             if (_context.Order == null)
             {
@@ -245,14 +245,14 @@ namespace restuarantmanagmentsystem.Controllers
 
             if (order != null)
             {
-                foreach (var o in order)
+                foreach (var o in order.Result)
                 {
                     _context.Order.Remove(o);
                 }
             }
 
-            table.IsAvailable = true;
-            _context.Update(table);
+            table.Result.IsAvailable = true;
+            _context.Update(table.Result);
             await _context.SaveChangesAsync();
 
             DayOfWeek wk = DateTime.Today.DayOfWeek;
@@ -270,10 +270,10 @@ namespace restuarantmanagmentsystem.Controllers
             await _context.SaveChangesAsync();
 
             var staffID = HttpContext.Session.GetInt32("_StaffID");
-            var staff = await _context.Staff
-            .FirstOrDefaultAsync(m => m.Id == staffID);
+          
+            var staff = GetStaffID((int)staffID);
 
-            return RedirectToAction("Index", "Tables", staff);
+            return RedirectToAction("Index", "Tables", staff.Result);
         }
 
         public async Task<IActionResult> RemoveItem(int? id)
@@ -283,25 +283,25 @@ namespace restuarantmanagmentsystem.Controllers
                 return NotFound();
             }
 
-            var order = await _context.Order
-                 .FirstOrDefaultAsync(m => m.ID == id);
+          
+
+            var order = GetOrderID((int)id);
 
             if (order == null)
             {
                 return NotFound();
             }
 
-            return View(order);
+            return View(order.Result);
         }
 
         [HttpPost, ActionName("RemoveItem")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveItem(int id)
         {
-            var order = await _context.Order
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var order = GetOrderID(id);
 
-            _context.Order.Remove(order);
+            _context.Order.Remove(order.Result);
             await _context.SaveChangesAsync();
 
 
@@ -309,9 +309,49 @@ namespace restuarantmanagmentsystem.Controllers
 
             var table = await _context.Table
                     .FirstOrDefaultAsync(m => m.Id == tableNo);
+           
 
             return RedirectToAction("Details", "Orders", table);
         }
      
+
+        public async Task<Table> GetTableOrders(int tableId)
+        {
+       
+            var table = await _context.Table
+                .Include(o => o.Orders)
+                .FirstOrDefaultAsync(m => m.Id == tableId);
+
+            return table;
+        }
+
+        public async Task<List<Order>> GetOrderTableNumber(int tableNumber)
+        {
+            var order = await _context.Order
+                .Where(m => m.TableNumber == tableNumber)
+                .ToListAsync();
+
+            return order;
+        }
+
+        public async Task<Order> GetOrderID(int orderID)
+        {
+            var order = await _context.Order
+                 .FirstOrDefaultAsync(m => m.ID == orderID);
+
+            return order;
+        }
+
+        public async Task<Staff> GetStaffID(int staffID)
+        {
+            var staff = await _context.Staff
+                .FirstOrDefaultAsync(m => m.Id == staffID);
+
+            return staff;
+        }
+
+        
     }
+
+ 
 }

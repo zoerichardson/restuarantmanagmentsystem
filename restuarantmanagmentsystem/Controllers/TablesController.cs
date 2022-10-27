@@ -1,5 +1,7 @@
 ﻿
 
+using restuarantmanagmentsystem.Models;
+
 namespace restuarantmanagmentsystem.Controllers
 {
     public class TablesController : Controller
@@ -15,42 +17,11 @@ namespace restuarantmanagmentsystem.Controllers
         public async Task<IActionResult> Index(Staff staff)
         {
 
-            var staffID = staff.Id;
+            var order = GetOrder(staff.Id);
+            var tables = GetTables(order.Result);
 
-            var order = await _context.Order
-                .Where(m => m.StaffID == staffID)
-                .ToListAsync();
 
-            List<Table> staffTables = new List<Table>();
-            foreach (var o in order)
-            {
-                var tableNo = o.TableNumber;
-                var table = await _context.Table
-                    .FirstOrDefaultAsync(m => m.TableNumber == tableNo);
-
-                staffTables.Add(table);
-            }
-
-            //gets all tables where there is a duplicate and returns only 1
-            var tableDuplicates = staffTables.GroupBy(x => x)
-                                            .Where(g => g.Count() > 1)
-                                            .Select(x => x.Key);
-
-            var allTables = staffTables.GroupBy(x => x)
-                                .Where(g => g.Count() == 1)
-                                .Select(x => x.Key);
-
-            List<Table> tableList = tableDuplicates.ToList();
-
-            tableList.AddRange(allTables);
-
-            var availableTables = await _context.Table
-                      .Where(m => m.IsAvailable == true)
-                      .ToListAsync();
-
-            tableList.AddRange(availableTables);
-
-            return View(tableList);
+            return View(tables.Result);
         }
 
         // GET: Tables/Create
@@ -72,17 +43,13 @@ namespace restuarantmanagmentsystem.Controllers
                 return View(table);
             }
 
-        var staffID = (int)HttpContext.Session.GetInt32("_StaffID");
-
             if (ModelState.IsValid)
             {
                 _context.Add(table);
 
-                var staff = await _context.Staff
-    .FirstOrDefaultAsync(m => m.Id == staffID);
-
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Admin", "Staffs", staff);
+                
+                return RedirectToAction("Admin", "Staffs");
             }
             return View(table);
         }
@@ -91,5 +58,53 @@ namespace restuarantmanagmentsystem.Controllers
         {
             return (_context.Table?.Any(e => e.TableNumber == tableNo)).GetValueOrDefault();
         }
+        private async Task<List<Order>> GetOrder(int staffID)
+        {
+            var order = await _context.Order
+               .Where(m => m.StaffID == staffID)
+               .ToListAsync();
+
+            return order;
+        }
+
+        private async Task<List<Table>> GetTables(List<Order> order)
+        {
+            List<Table> staffTables = new();
+            foreach (var o in order)
+            {
+                var tableNo = o.TableNumber;
+                var table = await _context.Table
+                    .FirstOrDefaultAsync(m => m.TableNumber == tableNo);
+
+                staffTables.Add(table);
+            }
+        
+            var tableDuplicates = staffTables.GroupBy(x => x)
+                                            .Where(g => g.Count() > 1)
+                                            .Select(x => x.Key);
+
+            var allTables = staffTables.GroupBy(x => x)
+                            .Where(g => g.Count() == 1)
+                            .Select(x => x.Key);
+
+            List<Table> tableList = tableDuplicates.ToList();
+
+            tableList.AddRange(allTables);
+
+            var availableTables = await _context.Table
+                      .Where(m => m.IsAvailable == true)
+                      .ToListAsync();
+
+            tableList.AddRange(availableTables);
+
+           
+
+            return tableList;
+        }
+
+
+
+
+
     }
 }
